@@ -1,6 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { login, reset } from "../slices/auth/authSlice";
+import { toast } from "react-toastify";
+import Spinner from "../components/Spinner";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
   const [formData, setFormData] = useState({
     email: "",
     parola: "",
@@ -14,8 +26,29 @@ const Login = () => {
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
+
+    const userData = {
+      email,
+      parola,
+    };
+
+    dispatch(login(userData))
   };
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+    if (isSuccess || user) {
+      navigate("/");
+    }
+    dispatch(reset());
+  }, [user, isError, isSuccess, message, navigate, dispatch]);
+
+
+  if(isLoading){
+    return <Spinner/>
+  }
 
   return (
     <div>
@@ -47,7 +80,9 @@ const Login = () => {
             />
           </div>
           <div className="form-group">
-            <button type="submit" className="btn btn-block">Giriş Yap</button>
+            <button type="submit" className="btn btn-block">
+              Giriş Yap
+            </button>
           </div>
         </form>
       </section>

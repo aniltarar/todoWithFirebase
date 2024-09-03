@@ -1,4 +1,9 @@
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+} from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 
 const register = async (email, parola, kullaniciAd) => {
@@ -18,8 +23,24 @@ const register = async (email, parola, kullaniciAd) => {
   return userResponse.user;
 };
 
+const logout = async () => {
+  await signOut(auth);
+  localStorage.removeItem("user");
+};
+
+const login = async (email, parola) => {
+  const userResponse = await signInWithEmailAndPassword(auth, email, parola);
+  if (userResponse.user) {
+    localStorage.setItem("user", JSON.stringify(userResponse.user));
+  }
+
+  return userResponse.user;
+};
+
 const authService = {
   register,
+  logout,
+  login,
 };
 
 export default authService;

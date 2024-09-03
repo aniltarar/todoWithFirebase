@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { register, reset } from "../slices/auth/authSlice";
 import { toast } from "react-toastify";
+import Spinner from "../components/Spinner";
 
 
 const Register = () => {
@@ -50,8 +51,15 @@ const Register = () => {
     if (isError) {
       toast.error(message);
     }
+    
     dispatch(reset());
   }, [user, isError, isSuccess, message, navigate, dispatch]);
+
+  if(isLoading) {
+    return (
+      <Spinner/>
+    )
+  }
 
   return (
     <>
